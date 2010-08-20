@@ -49,6 +49,8 @@ export LIB_DIR="lib";
 export BIN_DIR="bin";
 export NAILGUN_CLIENT="$BIN_DIR"/ng;
 export NAILGUN_JAR="$JAR_DIR/nailgun.jar";
+# This environment variable tells the narwhal_nail makefile where to locate
+#   the files it creates links to.
 export NARWHAL_PROTOTYPE_ENGINE_HOME="$NARWHAL_HOME/engines/rhino";
 
 # Ensure that the project is built
@@ -94,8 +96,8 @@ if [ "$LOWER_VERSION" != "1.5" ]; then
     exit
 fi
 
-
-NAILGUNNER=nailgunner/nailgunner
+export NAILGUN_CLASSPATH=$NAILGUN_JAR;
+NAILGUNNER="${NAILGUNNER:-$NARWHAL_ENGINE_HOME/nailgunner/nailgunner}"
 
 # drop into shell if there are no additional arguments
 if [ $# -lt 1 ]; then
