@@ -48,7 +48,7 @@ export JARS_DIR="jars";
 export LIB_DIR="lib";
 export BIN_DIR="bin";
 export NAILGUN_CLIENT="$BIN_DIR"/ng;
-export NAILGUN_JAR="$JAR_DIR/nailgun.jar";
+export NAILGUN_JAR="$JARS_DIR/nailgun.jar";
 # This environment variable tells the narwhal_nail makefile where to locate
 #   the files it creates links to.
 export NARWHAL_PROTOTYPE_ENGINE_HOME="$NARWHAL_HOME/engines/rhino";
