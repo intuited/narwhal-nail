@@ -13,6 +13,7 @@ SHELL = /bin/bash
 JARS_DIR ?= jars
 LIB_DIR ?= lib
 BIN_DIR ?= bin
+BOOTSTRAP ?= bootstrap.js
 # These two will determine the names of targets.
 NAILGUN_CLIENT ?= $(BIN_DIR)/ng
 NAILGUN_JAR ?= $(JARS_DIR)/nailgun.jar
@@ -38,7 +39,7 @@ PROTOTYPE_LIB_DIR = $(NARWHAL_PROTOTYPE_ENGINE_HOME)/lib
 .PHONY: all clean pristine
 
 
-all: $(NAILGUN_JAR) $(NAILGUN_CLIENT) $(DIRS)
+all: $(BOOTSTRAP) $(BIN_DIR) $(JARS_DIR) $(LIB_DIR) $(NAILGUN_JAR) $(NAILGUN_CLIENT)
 
 
 $(NAILGUN_CHECKOUT_DIR):
@@ -56,6 +57,9 @@ $(JARS_DIR):
 
 $(BIN_DIR):
 	mkdir -p $(BIN_DIR)
+
+$(BOOTSTRAP):
+	ln -s "$(abspath $(NARWHAL_PROTOTYPE_ENGINE_HOME)/$(BOOTSTRAP))" "$(BOOTSTRAP)"
 
 $(NAILGUN_JAR): | $(JARS_DIR) $(NAILGUN_PROJECT_DIR)
 	cd $(NAILGUN_PROJECT_DIR) && ant;
