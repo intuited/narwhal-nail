@@ -68,7 +68,7 @@ $(NAILGUN_CLIENT): $(BIN_DIR) $(NAILGUN_PROJECT_DIR)
 
 clean:
 	for dir in "$(LIB_DIR)" "$(JARS_DIR)"; do \
-	    if [ -e "$$dir"/* ]; then rm "$$dir"/*; else true; fi; \
+	    if ls "$$dir"/* &>/dev/null; then rm "$$dir"/*; else true; fi; \
 	    if [ -d "$$dir" ]; then rmdir "$$dir"; else true; fi; \
 	done;
 	if [ -e "$(NAILGUN_CLIENT)" ]; then rm "$(NAILGUN_CLIENT)"; else true; fi;
