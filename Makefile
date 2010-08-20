@@ -71,7 +71,7 @@ clean:
 	    if ls "$$dir"/* &>/dev/null; then rm "$$dir"/*; else true; fi; \
 	    if [ -d "$$dir" ]; then rmdir "$$dir"; else true; fi; \
 	done;
-	if [ -e "$(NAILGUN_CLIENT)" ]; then rm "$(NAILGUN_CLIENT)"; else true; fi;
+	if [ -h "$(NAILGUN_CLIENT)" ]; then rm "$(NAILGUN_CLIENT)"; else true; fi;
 	$(MAKE) -C "$(NAILGUN_PROJECT_DIR)" clean || true;
 	cd "$(NAILGUN_PROJECT_DIR)" && ant clean || true;
 
