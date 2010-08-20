@@ -96,6 +96,8 @@ if [ "$LOWER_VERSION" != "1.5" ]; then
     exit
 fi
 
+export RLWRAP_COMMAND=narwhal
+export JAVA_MAIN CLASSPATH BOOTCLASSPATH BOOTSTRAP;
 export NAILGUN_CLASSPATH=$NAILGUN_JAR;
 NAILGUNNER="${NAILGUNNER:-$NARWHAL_ENGINE_HOME/nailgunner/nailgunner}"
 
