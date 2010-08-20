@@ -51,9 +51,8 @@ export NAILGUN_CLIENT="$BIN_DIR"/ng;
 export NAILGUN_JAR="$JAR_DIR/nailgun.jar";
 export NARWHAL_PROTOTYPE_ENGINE_HOME="$NARWHAL_HOME/engines/rhino";
 
-# Actually do the build
+# Ensure that the project is built
 (cd "$NARWHAL_ENGINE_HOME" && $MAKE) || exit $?
-
 
 
 CLASSPATH=$NARWHAL_ENGINE_HOME/jars/jna.jar
@@ -96,126 +95,11 @@ if [ "$LOWER_VERSION" != "1.5" ]; then
 fi
 
 
-
+NAILGUNNER=nailgunner/nailgunner
 
 # drop into shell if there are no additional arguments
 if [ $# -lt 1 ]; then
-    # check for rlwrap
-    RLWRAP="$(which rlwrap)"
-    if [ -x "$RLWRAP" ]; then
-        RLWRAP="$RLWRAP -C narwhal"
-    else
-        RLWRAP=""
-        # jline doesn't seem to work over nailgun.
-        ##--  CLASSPATH="$CLASSPATH:$NARWHAL_ENGINE_HOME/jars/jline.jar"
-        # TODO: I think the problem is actually that the ConsoleRunner class is not being used.
-    fi
-    function nailgun_fire {
-        $RLWRAP "$NAILGUN_CLIENT" "$JAVA_MAIN" -version "$NARWHAL_JS_VERSION" -f "$BOOTSTRAP" -f -
-    }
+    $NAILGUNNER shoot -version "$NARWHAL_JS_VERSION" -f "$BOOTSTRAP" -f -;
 else
-    function nailgun_fire {
-        "$NAILGUN_CLIENT" "$JAVA_MAIN" -version "$NARWHAL_JS_VERSION" "$BOOTSTRAP" "$0" "$@"
-    }
-fi
-
-function nailgun_server_load {
-    java $JAVA_OPTS $NARWHAL_JAVA_ARGUMENTS -cp "$NAILGUN_JAR:$BOOTCLASSPATH:$CLASSPATH" "$NAILGUN_MAIN" $NAILGUN_PORT > "$server_out" 2>"$server_err"
-}
-
-function nailgun_shoot {
-    # Connects a client, launching the server if necessary.
-
-    # First try to connect to an existing server instance
-    # TODO: check to see if a nail can return a non-zero value
-    nailgun_fire "$@" && return;
-
-    declare -i child_death_count=0
-    declare -i more_retries=$NAILGUN_RETRIES
-
-    # Discover if the server has terminated early.
-    # This is not really necessary but will save some time
-    #   in cases of server failure
-    #   by avoiding repeated connection retries to the failed server.
-    trap "let child_death_count += 1" SIGCHLD
-    echo "Launching nailgun server..." >&2
-    server_out=$(mktemp)
-    server_err=$(mktemp)
-    nailgun_server_load &
-
-    while (( $child_death_count == 0 )) && (( $more_retries > 0 )); do
-        # TODO: Figure out a way to clean up the temp files
-        #         after the server completes.
-        #       I think these files can actually be rm'd right away,
-        #         but that might be filesystem-dependent.
-        #       For extra points, rewrite this routine
-        #         in a language that doesn't need temp files for this.
-        nailgun_fire "$@" && return;
-        # Mourn the death of the fired nail
-        let child_death_count -= 1;
-        let more_retries -= 1;
-        sleep NAILGUN_RETRY_PAUSE;
-    done
-
-    trap SIGCHLD;
-
-    # Post-mortem
-    if (( $child_death_count )); then
-        echo "Nailgun server terminated early."
-    else
-        echo "Failed to connect to nailgun server."
-    fi
-
-    echo "Output:"
-    cat "$server_out" | sed 's/^/    /'
-    echo "Error:"
-    cat "$server_err" | sed 's/^/    /'
-    rm "$server_out" "$server_err"
-    return 1
-}
-
-##--  function nailgun_server_load {
-##--      server_out=$(mktemp)
-##--      server_err=$(mktemp)
-##--      declare -i SERVER_DONE=0
-##--      echo "Launching nailgun server..." >&2
-##--      trap 'SERVER_DONE+=1' SIGCHLD
-##--      java $JAVA_OPTS $NARWHAL_JAVA_ARGUMENTS -cp "$NAILGUN_JAR:$BOOTCLASSPATH:$CLASSPATH" "$NAILGUN_MAIN" $NAILGUN_PORT > "$server_out" 2>"$server_err" &
-##--      # TODO: Hopefully find a better way to do this.
-##--      #       This is not so easy, since nailgun doesn't output anything on success
-##--      #         that it doesn't also output on failure.
-##--      sleep NAILGUN_START_WAIT;
-##--      trap SIGCHLD
-##--      (( $SERVER_DONE )) && {
-##--          echo "Nailgun server terminated early.  Output:"
-##--          cat "$server_out" | sed 's/^/    /'
-##--          echo "Error:"
-##--          cat "$server_err" | sed 's/^/    /'
-##--          rm "$server_out" "$server_err"
-##--          return 1
-##--      } >&2
-##--      echo "Nailgun server established."
-##--      echo "    Output directed to $server_out"
-##--      echo "    Error directed to $server_err"
-##--  }
-
-##--  # If that failed, start a server and try again
-##--  nailgun_server_load && nailgun_fire "$@";
-##--  
-##--  
-##--  
-##--  # drop into shell if there are no additional arguments
-##--  if [ $# -lt 1 ]; then
-##--      # prefer rlwrap to jline.
-##--      RLWRAP="$(which rlwrap)"
-##--      if [ -x "$RLWRAP" ]; then
-##--          RLWRAP="$RLWRAP -C narwhal"
-##--      else
-##--          RLWRAP=""
-##--          CLASSPATH="$CLASSPATH:$NARWHAL_ENGINE_HOME/jars/jline.jar"
-##--      fi
-##--      $RLWRAP java $JAVA_OPTS $NARWHAL_JAVA_ARGUMENTS -cp "$BOOTCLASSPATH:$CLASSPATH" "$JAVA_MAIN" -f "$BOOTSTRAP" -f -
-##--  else
-##--      java $JAVA_OPTS $NARWHAL_JAVA_ARGUMENTS -cp "$BOOTCLASSPATH:$CLASSPATH" "$JAVA_MAIN" -version "$NARWHAL_JS_VERSION" "$BOOTSTRAP" "$0" "$@"
-##--  fi
-##--  
+    $NAILGUNNER -i shoot -version "$NARWHAL_JS_VERSION" "$BOOTSTRAP" "$0" "$@";
+fi;
