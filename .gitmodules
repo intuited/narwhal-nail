@@ -1,3 +1,3 @@
 [submodule "nailgunner"]
 	path = nailgunner
-	url = flow:git/projects/nailgunner
+	url = https://github.com/intuited/nailgunner.git

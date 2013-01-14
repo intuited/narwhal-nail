@@ -23,9 +23,16 @@ It seems to work okay so far,
 See the **Issues** section for more details.
 
 The initial goal of being able to run interactive-ish commands
-  like `tusk help` without having to wait for an actual narwhal to show up
-  seems to have been met.
+  like `tusk help` without having to wait long enough
+  for an actual narwhal to show up seems to have been met.
 
+It's still a bit rough around the edges, and currently
+  (2013-01-14) I don't remember how well it was all working
+  the last time I tested it.
+
+I probably won't be doing any more work on it
+  since I'm mostly just using node these days.
+  However, it may be interesting or useful to you nonetheless.
 
 Installation
 ------------
